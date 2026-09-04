@@ -43,24 +43,42 @@ export function Navbar() {
         </div>
 
         <button
-          className="text-foreground md:hidden"
+          className="relative text-foreground transition-transform duration-200 ease-out active:scale-95 md:hidden"
           aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
+          aria-controls="mobile-menu"
           onClick={() => setOpen((v) => !v)}
         >
-          {open ? <X size={24} /> : <Menu size={24} />}
+          <span
+            className="inline-block transition-transform duration-300 ease-out"
+            style={{ transform: open ? "rotate(90deg)" : "rotate(0deg)" }}
+          >
+            {open ? <X size={24} /> : <Menu size={24} />}
+          </span>
         </button>
       </div>
 
-      {open ? (
-        <nav className="flex flex-col gap-1 border-t border-border px-6 py-4 md:hidden">
-          {links.map((l) => (
+      <nav
+        id="mobile-menu"
+        className={`overflow-hidden border-t border-border transition-all duration-300 ease-out md:hidden ${
+          open ? "max-h-80 opacity-100" : "max-h-0 opacity-0"
+        }`}
+        aria-hidden={!open}
+      >
+        <div className="flex flex-col gap-1 px-6 py-4">
+          {links.map((l, i) => (
             <Link
               key={l.to}
               to={l.to}
               onClick={() => setOpen(false)}
               activeOptions={{ exact: l.to === "/" }}
               activeProps={{ className: "text-primary" }}
-              className="py-2 text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground"
+              className="translate-y-0 py-2 text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground transition-all duration-200 hover:text-foreground"
+              style={{
+                transitionDelay: open ? `${i * 35}ms` : "0ms",
+                opacity: open ? 1 : 0,
+                transform: open ? "translateY(0)" : "translateY(-6px)",
+              }}
             >
               {l.label}
             </Link>
@@ -68,8 +86,9 @@ export function Navbar() {
           <CtaLink to="/contact" className="mt-3" onClick={() => setOpen(false)}>
             Join Now
           </CtaLink>
-        </nav>
-      ) : null}
+        </div>
+      </nav>
     </header>
   );
 }
+
